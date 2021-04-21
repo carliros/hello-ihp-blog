@@ -1,6 +1,12 @@
 module Web.View.Posts.Show where
 import Web.View.Prelude
-    ( hsx, View(html), Post, PostsController(PostsAction) )
+    ( IsLabel(fromLabel),
+      get,
+      hsx,
+      View(html),
+      Post,
+      Post'(title, body),
+      PostsController(PostsAction) )
 
 data ShowView = ShowView { post :: Post }
 
@@ -12,6 +18,6 @@ instance View ShowView where
                 <li class="breadcrumb-item active">Show Post</li>
             </ol>
         </nav>
-        <h1>Show Post</h1>
-        <p>{post}</p>
+        <h1>{get #title post}</h1>
+        <p>{get #body post}</p>
     |]

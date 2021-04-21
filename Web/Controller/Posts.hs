@@ -9,6 +9,8 @@ import Web.Controller.Prelude
       SetField,
       CanUpdate(updateRecord),
       MetaBag,
+      nonEmpty,
+      validateField,
       ControllerContext,
       Record(newRecord),
       ifValid,
@@ -21,7 +23,7 @@ import Web.Controller.Prelude
       Controller(action),
       Fetchable(fetch),
       Post,
-      Post'(meta, id),
+      Post'(meta, id, title),
       PostsController(..) )
 import Web.View.Posts.Index ( IndexView(IndexView, posts) )
 import Web.View.Posts.New ( NewView(NewView, post) )
@@ -73,6 +75,6 @@ instance Controller PostsController where
         setSuccessMessage "Post deleted"
         redirectTo PostsAction
 
-buildPost :: (HasField "meta" t2 MetaBag, SetField "body" t2 fieldType1, SetField "meta" t2 MetaBag, SetField "title" t2 fieldType2, ParamReader fieldType1, ParamReader fieldType2, ?context::ControllerContext) => t2 -> t2
 buildPost post = post
     |> fill @["title","body"]
+    |> validateField #title nonEmpty
