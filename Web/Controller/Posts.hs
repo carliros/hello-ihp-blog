@@ -10,6 +10,7 @@ import Web.Controller.Prelude
       CanUpdate(updateRecord),
       MetaBag,
       nonEmpty,
+      orderByDesc,
       validateField,
       ControllerContext,
       Record(newRecord),
@@ -23,7 +24,7 @@ import Web.Controller.Prelude
       Controller(action),
       Fetchable(fetch),
       Post,
-      Post'(meta, id, title),
+      Post'(meta, id, title, createdAt),
       PostsController(..) )
 import Web.View.Posts.Index ( IndexView(IndexView, posts) )
 import Web.View.Posts.New ( NewView(NewView, post) )
@@ -32,7 +33,9 @@ import Web.View.Posts.Show ( ShowView(ShowView, post) )
 
 instance Controller PostsController where
     action PostsAction = do
-        posts <- query @Post |> fetch
+        posts <- query @Post 
+            |> orderByDesc #createdAt
+            |> fetch
         render IndexView { .. }
 
     action NewPostAction = do
