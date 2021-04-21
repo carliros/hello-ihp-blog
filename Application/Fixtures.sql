@@ -27,3 +27,12 @@ INSERT INTO public.posts (id, title, body, created_at) VALUES ('73170821-d03f-4d
 ALTER TABLE public.posts ENABLE TRIGGER ALL;
 
 
+ALTER TABLE public.comments DISABLE TRIGGER ALL;
+
+INSERT INTO public.comments (id, post_id, author, body) VALUES ('08643bfc-74a7-468d-bac6-ab09a7ac9ab3', 'b7784c72-e2fb-4f30-8938-bb3aa8cfb8d6', 'Carlos', 'This is a comment');
+INSERT INTO public.comments (id, post_id, author, body) VALUES ('c2f9be7c-6753-406f-a592-1bd565980504', 'b7784c72-e2fb-4f30-8938-bb3aa8cfb8d6', 'Pepe', 'fsda');
+
+
+ALTER TABLE public.comments ENABLE TRIGGER ALL;
+
+

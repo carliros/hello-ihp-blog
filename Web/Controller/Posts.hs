@@ -2,11 +2,14 @@ module Web.Controller.Posts where
 
 import Web.Controller.Prelude
     ( Monad((>>=)),
+      Applicative(pure),
       Either(Right, Left),
       Text,
+      modify,
       (|>),
       createRecord,
       deleteRecord,
+      (.),
       CanUpdate(updateRecord),
       ifValid,
       redirectTo,
@@ -22,6 +25,7 @@ import Web.Controller.Prelude
       Fetchable(fetch),
       Record(newRecord),
       ValidatorResult(..),
+      Comment'(createdAt),
       Post,
       Post'(createdAt, comments, body, meta, title, id),
       PostsController(..) )
@@ -44,7 +48,9 @@ instance Controller PostsController where
         render NewView { .. }
 
     action ShowPostAction { postId } = do
-        post <- fetch postId >>= fetchRelated #comments
+        post <- fetch postId 
+            >>= pure . modify #comments (orderByDesc #createdAt)
+            >>= fetchRelated #comments
         render ShowView { .. }
 
     action EditPostAction { postId } = do
