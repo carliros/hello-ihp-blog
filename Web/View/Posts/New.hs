@@ -5,6 +5,8 @@ import Web.View.Prelude
       formFor,
       submitButton,
       textField,
+      textareaField,
+      helpText,
       Html,
       View(html),
       Post,
@@ -28,6 +30,6 @@ instance View NewView where
 renderForm :: Post -> Html
 renderForm post = formFor post [hsx|
     {(textField #title)}
-    {(textField #body)}
+    {(textareaField #body) { helpText = "You can use Markdown here"} }
     {submitButton}
 |]

@@ -1,35 +1,34 @@
 module Web.Controller.Posts where
 
 import Web.Controller.Prelude
-    ( HasField,
-      Either(Right, Left),
+    ( Either(Right, Left),
+      Text,
       (|>),
       createRecord,
       deleteRecord,
-      SetField,
-      CanUpdate(updateRecord),
-      MetaBag,
       nonEmpty,
-      orderByDesc,
       validateField,
-      ControllerContext,
+      CanUpdate(updateRecord),
       Record(newRecord),
+      ValidatorResult(..),
+      Post,
+      Post'(createdAt, body, meta, title, id),
+      Controller(action),
       ifValid,
       redirectTo,
       render,
       setSuccessMessage,
+      orderByDesc,
       query,
       FillParams(fill),
-      ParamReader,
-      Controller(action),
       Fetchable(fetch),
-      Post,
-      Post'(meta, id, title, createdAt),
       PostsController(..) )
+
 import Web.View.Posts.Index ( IndexView(IndexView, posts) )
 import Web.View.Posts.New ( NewView(NewView, post) )
 import Web.View.Posts.Edit ( EditView(EditView, post) )
 import Web.View.Posts.Show ( ShowView(ShowView, post) )
+import Text.MMark ( parse )
 
 instance Controller PostsController where
     action PostsAction = do
@@ -78,6 +77,14 @@ instance Controller PostsController where
         setSuccessMessage "Post deleted"
         redirectTo PostsAction
 
+isMarkdown :: Text -> ValidatorResult
+isMarkdown text =
+    case parse "" text of
+        Left error -> Failure "Please provide valid Markdown"
+        Right _ -> Success
+
 buildPost post = post
     |> fill @["title","body"]
     |> validateField #title nonEmpty
+    |> validateField #body nonEmpty
+    |> validateField #body isMarkdown
