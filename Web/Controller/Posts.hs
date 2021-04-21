@@ -1,27 +1,29 @@
 module Web.Controller.Posts where
 
 import Web.Controller.Prelude
-    ( Either(Right, Left),
+    ( Monad((>>=)),
+      Either(Right, Left),
       Text,
       (|>),
       createRecord,
       deleteRecord,
-      nonEmpty,
-      validateField,
       CanUpdate(updateRecord),
-      Record(newRecord),
-      ValidatorResult(..),
-      Post,
-      Post'(createdAt, body, meta, title, id),
-      Controller(action),
       ifValid,
       redirectTo,
       render,
+      fetchRelated,
       setSuccessMessage,
       orderByDesc,
       query,
+      nonEmpty,
+      validateField,
       FillParams(fill),
+      Controller(action),
       Fetchable(fetch),
+      Record(newRecord),
+      ValidatorResult(..),
+      Post,
+      Post'(createdAt, comments, body, meta, title, id),
       PostsController(..) )
 
 import Web.View.Posts.Index ( IndexView(IndexView, posts) )
@@ -42,7 +44,7 @@ instance Controller PostsController where
         render NewView { .. }
 
     action ShowPostAction { postId } = do
-        post <- fetch postId
+        post <- fetch postId >>= fetchRelated #comments
         render ShowView { .. }
 
     action EditPostAction { postId } = do
